@@ -21,6 +21,7 @@ class Room:
         if self.e_to is not None:
             return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
         return f"({self.x}, {self.y})"
+
     def connect_rooms(self, connecting_room, direction):
         '''
         Connect two rooms in the given n/s/e/w direction
@@ -152,9 +153,9 @@ class World:
 
 
 w = World()
-num_rooms = 44
-width = 8
-height = 7
+num_rooms = 100
+width = 10
+height = 10
 w.generate_rooms(width, height, num_rooms)
 w.print_rooms()
 
