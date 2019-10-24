@@ -72,10 +72,6 @@ class World:
 
 
     def generate_rooms(self, size_x, size_y, num_rooms):
-        '''
-        Fill up the grid, bottom to top, in a zig-zag pattern
-        '''
-
         # Initialize the grid
         self.grid = [None] * size_y
         self.width = size_x
