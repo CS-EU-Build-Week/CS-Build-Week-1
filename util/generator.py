@@ -5,6 +5,7 @@
 # procedural generation algorithm and use print_rooms()
 # to see the world.
 
+import random
 
 class Room:
     def __init__(self, id, name, description, x, y):
@@ -17,10 +18,22 @@ class Room:
         self.w_to = None
         self.x = x
         self.y = y
+        self.num_of_connections = 0
+
+
     def __repr__(self):
+        initial_state = "ID:{}".format(self.id)
+        if self.n_to is not None:
+            initial_state += ",N({},{})".format(self.n_to.x, self.n_to.y)
+        if self.w_to is not None:
+            initial_state += ",W({},{})".format(self.w_to.x, self.w_to.y)
         if self.e_to is not None:
-            return f"({self.x}, {self.y}) -> ({self.e_to.x}, {self.e_to.y})"
-        return f"({self.x}, {self.y})"
+            initial_state += ",E({},{})".format(self.e_to.x, self.e_to.y)
+        if self.s_to is not None:
+            initial_state += ",S({},{})".format(self.s_to.x, self.s_to.y)
+        initial_state += " "
+        return initial_state
+
 
     def connect_rooms(self, connecting_room, direction):
         '''
@@ -30,6 +43,20 @@ class Room:
         reverse_dir = reverse_dirs[direction]
         setattr(self, f"{direction}_to", connecting_room)
         setattr(connecting_room, f"{reverse_dir}_to", self)
+        self.num_of_connections += 1
+        connecting_room.num_of_connections += 1
+
+
+    def remove_connection(self, direction):
+        reverse_dirs = {"n": "s", "s": "n", "e": "w", "w": "e"}
+
+        connected_room = self.get_room_in_direction(direction)
+        setattr(self, f"{direction}_to", None)
+        self.num_of_connections -= 1
+        reverse_dir = reverse_dirs[direction]
+        setattr(connected_room, f"{reverse_dir}_to", None)
+        connected_room.num_connects -= 1
+
     def get_room_in_direction(self, direction):
         '''
         Connect two rooms in the given n/s/e/w direction
@@ -42,11 +69,9 @@ class World:
         self.grid = None
         self.width = 0
         self.height = 0
-    def generate_rooms(self, size_x, size_y, num_rooms):
-        '''
-        Fill up the grid, bottom to top, in a zig-zag pattern
-        '''
 
+
+    def generate_rooms(self, size_x, size_y, num_rooms):
         # Initialize the grid
         self.grid = [None] * size_y
         self.width = size_x
@@ -90,12 +115,18 @@ class World:
             # Connect the new room to the previous room
             if previous_room is not None:
                 previous_room.connect_rooms(room, room_direction)
+                down_room = self.grid[y - 1][x]
+                if down_room and random.randint(1,10) % 2 == 0:
+                    down_room.connect_rooms(room, 'n')
 
             # Update iteration variables
             previous_room = room
             room_count += 1
+            # print(f'room count:{room_count}, previous_room: {previous_room}')
 
-
+        if (room_count == num_rooms-1):
+            previous_room.connect_rooms(room, room_direction)
+            # print(f'room count:{room_count}, previous_room: {previous_room}')
 
     def print_rooms(self):
         '''

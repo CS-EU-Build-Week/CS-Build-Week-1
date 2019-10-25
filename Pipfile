@@ -14,10 +14,15 @@ django-cors-headers = "*"
 gunicorn = "*"
 django-heroku = "*"
 django-rest-api = "*"
+<<<<<<< HEAD
+=======
+psycopg2-binary = "*"
+>>>>>>> bc0ad5127154984b87082cde765b186d7c0b80d6
 dj-database-url = "*"
 whitenoise = "*"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.7"
